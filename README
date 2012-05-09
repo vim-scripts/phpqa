@@ -2,8 +2,6 @@ This is a mirror of http://www.vim.org/scripts/script.php?script_id=3980
 
 This is a plugin for Vim that integrates PHP quality checking tools, to allow you to code to a particular standard and easily spot errors and violations.
 
-**NEW** - Support for code coverage
-
 It uses PHP linter to check for syntax errors, integrates with PHP Code Sniffer and PHP Mess Detector to check for coding standard violations, and reads clover code coverage files to mark lines of code that aren't covered by tests. By default, mess detector and code sniffer automatically run when a PHP file is saved, and it can be easily configured to load code coverage markers when a file is opened.
 
 More information regarding configuration and usage can be found on the Github repository page: https://github.com/joonty/vim-phpqa

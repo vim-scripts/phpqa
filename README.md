@@ -45,7 +45,7 @@ and run `vim +BundleInstall +qall` from a terminal.
 
 If you aren't using vundle, you will have to extract the files in each folder to the correct folder in *.vim/*.
 
-**Note:** your vim installation must be compiled with *signs* and *perl* for this plugin to work.
+**Note:** your Vim installation must be compiled with *signs* for this plugin to work. If you want to use code coverage support you will need to have Vim compiled with Python.
 
 ### Configuration
 
@@ -101,13 +101,11 @@ let g:phpqa_codecoverage_file = "/path/to/clover.xml"
 
 ### Acknowlegements
 
-This plugin has reused and modified a lot of the code from the Vim [QuickHigh plugin][5], written by Brian Medley. It required too much modification to be able to use it as a stand-alone plugin, so it has been added to this code. My thanks goes to Brian for the work that's gone into that script.
+This plugin **originally** reused and modified a lot of the code from the Vim [QuickHigh plugin][5], written by Brian Medley. Although this plugin no longer uses any of that code, my thanks goes to Brian for the work that's gone into that script.
 
 ### License
 
-This plugin is released under the [GPL license][6].
-
-QuickHigh was also released under the GPL license.
+This plugin is released under the [MIT License][6].
 
 
 [1]: http://pear.php.net/package/PHP_CodeSniffer/redirected
