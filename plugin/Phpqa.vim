@@ -6,13 +6,18 @@
 " syntax errors and coding standard violations.
 "
 " License:
-"   MIT (http://www.gnu.org/licenses/gpl.txt)
+"   MIT (https://raw.githubusercontent.com/joonty/vim-phpqa/master/LICENSE)
 "
 " Authors:
 " Jon Cairns <jon@joncairns.com>
 "
 " }}}
 "-------------------------------------------------
+
+" Disable plugin if php isn't available
+if !executable("php")
+    finish
+endif
 
 if exists("g:phpqa_check")
     finish
@@ -43,7 +48,7 @@ endif
 
 " Arguments to pass to code sniffer, e.g standard name
 if !exists("g:phpqa_codesniffer_args")
-    let g:phpqa_codesniffer_args="--standard=PHPCS"
+    let g:phpqa_codesniffer_args=""
 endif
 
 " PHPMD binary (mess detector)
@@ -51,13 +56,13 @@ if !exists("g:phpqa_messdetector_cmd")
     let g:phpqa_messdetector_cmd='phpmd'
 endif
 
-" Rule set XML file for mess detector
+" Rule set built-in or XML file for mess detector, comma separated
 if !exists("g:phpqa_messdetector_ruleset")
-    let g:phpqa_messdetector_ruleset=""
+    let g:phpqa_messdetector_ruleset="codesize,unusedcode,naming"
 endif
 
 " Clover code coverage file
-if !exists("g:phpqa_codecoverage_file") 
+if !exists("g:phpqa_codecoverage_file")
     let g:phpqa_codecoverage_file = ""
 endif
 
@@ -69,6 +74,12 @@ endif
 " Whether to show signs for covered code (or only not covered)
 " It may speed things up to turn this off
 if !exists("g:phpqa_codecoverage_showcovered")
+    let g:phpqa_codecoverage_showcovered = 1
+endif
+
+" Whether to show signs for covered code (or only not covered)
+" It may speed things up to turn this off
+if !exists("g:phpqa_codecoverage_regex")
     let g:phpqa_codecoverage_showcovered = 1
 endif
 
@@ -95,21 +106,21 @@ endif
 
 
 " Run all QA tools
-function! phpqa:RunAll() 
+function! PhpqaRunAll()
     if &filetype == 'php'
         " Check syntax valid before running others
-        let retval=phpqa#PhpLint()
+        let retval=Phpqa#PhpLint()
         if 0 == retval && 1 == g:phpqa_run_on_write
-            call phpqa#PhpQaTools(g:phpqa_codesniffer_autorun,g:phpqa_messdetector_autorun)
+            call Phpqa#PhpQaTools(g:phpqa_codesniffer_autorun,g:phpqa_messdetector_autorun)
         endif
-    endif	
+    endif
 endf
 
 " Run code coverage
-function! phpqa:RunCodeCoverage()
+function! PhpqaRunCodeCoverage()
     if &filetype == 'php'
         if "" != g:phpqa_codecoverage_file && 1 == g:phpqa_codecoverage_autorun
-            call phpqa#PhpCodeCoverage()
+            call Phpqa#PhpCodeCoverage()
         endif
     endif
 endf
@@ -118,25 +129,27 @@ if !hasmapto('<Plug>CodeCoverageToggle', 'n')
     nmap <unique> <Leader>qc  <Plug>CodeCoverageToggle
 endif
 nnoremap <unique> <script> <Plug>CodeCoverageToggle <SID>CodeCoverageToggle
-nnoremap <silent> <SID>CodeCoverageToggle :call phpqa#CodeCoverageToggle()<cr>
+nnoremap <silent> <SID>CodeCoverageToggle :call Phpqa#CodeCoverageToggle()<cr>
 
 " Run all tools automatically on write and other events
-autocmd BufWritePost * call phpqa:RunAll()
-autocmd BufRead * call phpqa#PhpLint()
-autocmd BufRead * call phpqa:RunCodeCoverage()
+if g:phpqa_run_on_write
+    autocmd BufWritePost * call PhpqaRunAll()
+    autocmd BufRead * call Phpqa#PhpLint()
+    autocmd BufRead * call PhpqaRunCodeCoverage()
+endif
 
 " Allow each command to be called individually
-command Php call phpqa#PhpLint()
-command Phpcs call phpqa#PhpQaTools(1,0)
-command Phpmd call phpqa#PhpQaTools(0,1)
-command Phpcc call phpqa#PhpCodeCoverage()
+command Php call Phpqa#PhpLint()
+command Phpcs call Phpqa#PhpQaTools(1,0)
+command Phpmd call Phpqa#PhpQaTools(0,1)
+command Phpcc call Phpqa#PhpCodeCoverage()
 
 
 if !hasmapto('<Plug>QAToolsToggle', 'n')
     nmap <unique> <Leader>qa  <Plug>QAToolsToggle
 endif
 nnoremap <unique> <script> <Plug>QAToolsToggle <SID>QAToolsToggle
-nnoremap <silent> <SID>QAToolsToggle :call phpqa#QAToolsToggle()<cr>
+nnoremap <silent> <SID>QAToolsToggle :call Phpqa#QAToolsToggle()<cr>
 
 " Code sniffer sign config
 let g:phpqa_codesniffer_append = "(PHP_CodeSniffer)"
